@@ -33,4 +33,5 @@ class Users {
 
 export const userDB = new Users()
 
-userDB.addUser([{ id: '1', name: 'Hugo' }, { id: 'someid', name: 'somename' }])
+// Populate fakeDB with some data
+userDB.addUser([{ id: '1', name: 'Hugo' }, { id: '2', name: 'Jack' }])

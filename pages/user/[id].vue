@@ -3,18 +3,20 @@ const route = useRoute()
 const router = useRouter()
 const client = useClient()
 
-const id = route.params.id
-if (typeof id !== 'string')
-  router.replace('/notfound') // FIXME: This doesn't seem to be working
+const id = route.params.id as string
 
-const user = await client.query('getUser', { id })
-if (typeof user === 'undefined')
-  router.replace('/notfound')
+const {
+  data,
+  pending,
+  error,
+  refresh,
+} = await useAsyncQuery(['getUser', { id }], {
+  pick: ['name', 'id'],
+})
 
 const deleteUser = async () => {
   await client.mutation('deleteUser', { id })
-  await new Promise(resolve => setTimeout(resolve, 100))
-  router.go(-1)
+  router.replace('/user')
 }
 
 definePageMeta({
@@ -23,17 +25,28 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
+  <div v-if="pending">
+    loading...
+  </div>
+  <div v-else-if="error">
+    not found
+  </div>
+  <div v-else-if="data">
     <div i-twemoji:waving-hand text-4xl inline-block animate-shake-x animate-duration-5000 />
     <h3 text-2xl font-500>
       Hi,
     </h3>
-    <div text-xl>
-      {{ user.name }}!
-    </div>
+    <ul text-xl>
+      <li>
+        ID: {{ data.id }}
+      </li>
+      <li>
+        Name: {{ data.name }}
+      </li>
+    </ul>
 
-    <div>
-      <button @click="deleteUser">
+    <div mt-4>
+      <button btn text-sm @click="deleteUser">
         Delete
       </button>
     </div>
@@ -43,5 +56,8 @@ definePageMeta({
         Back
       </button>
     </div>
+  </div>
+  <div v-else>
+    Something else went wrong
   </div>
 </template>

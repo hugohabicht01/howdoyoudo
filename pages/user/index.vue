@@ -9,7 +9,7 @@ const createUser = async () => {
   const { id } = await client.mutation('createUser', {
     name: newUserName.value,
   })
-  await new Promise(resolve => setTimeout(resolve, 200))
+  newUserName.value = ''
   router.push(`/user/${encodeURIComponent(id)}`)
 }
 definePageMeta({
@@ -18,7 +18,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="w-8/10 m-auto">
+  <div class="w-4/10 m-auto">
     <div i-twemoji:waving-hand text-4xl inline-block animate-shake-x animate-duration-5000 />
     <h3 text-2xl font-500>
       Userlist
@@ -33,14 +33,16 @@ definePageMeta({
       </ol>
     </div>
 
-    <div>
-      <h3>Create new user</h3>
+    <div mt-4>
+      <h3 text-xl>
+        Create new user
+      </h3>
       <form @submit.prevent="createUser">
-        <input v-model="newUserName" type="text" class="text-black">
-        <input type="submit">
+        <input v-model="newUserName" rounded type="text" text-black pt-1 pb-1>
+        <input btn ml-1 type="submit">
       </form>
     </div>
-    <div>
+    <div mt-10>
       <button class="btn m-3 text-sm" @click="router.go(-1)">
         Back
       </button>
